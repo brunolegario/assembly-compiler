@@ -7,5 +7,26 @@
   justify-content: center;
   align-items: center;
 
-  background-color: $gray;
+  background-color: $asphalt;
+  font-family: 'Maven Pro', sans-serif;
+}
+
+.flex {
+  display: flex;
+  height: 100%;
+
+
+  &.column {
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+  }
+  &.row {
+    flex-direction: row;
+    justify-content: flex-start;
+  }
+}
+
+.test {
+  border: 1px solid white;
 }

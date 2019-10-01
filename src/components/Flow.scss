@@ -1,0 +1,70 @@
+@import '../css/app.scss';
+
+.flow.container {
+  position: absolute;
+  width: 100%;
+  height: 20%;
+  max-height: 20%;
+  overflow: auto;
+  padding-right: 1rem;
+  bottom: 0;
+
+  > .label {
+    position: absolute;
+    top: 0.25rem;
+    left: 0.25rem;
+    font-family: 'Josefin Sans', sans-serif;
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: $white;
+  }
+
+  .content {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    padding-top: 3.2rem;
+    justify-content: space-between;
+
+    .button {
+      display: flex;
+      width: 18%;
+      height: calc(100% - 0.3rem);
+      align-items: center;
+      justify-content: center;
+      border: none;
+      border-radius: 0.2rem;
+      background-color: $lightRed;
+      box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.3);
+      font-family: 'Josefin Sans', sans-serif;
+      font-size: 1.8rem;
+      color: $white;
+      outline: none;
+
+      &:hover {
+        cursor: pointer;
+        background-color: $darkRed;
+      }
+      &:disabled {
+        cursor: not-allowed;
+        background-color: $silver;
+      }
+
+
+      &.yellow {
+        background-color: $lightYellow;
+        font-weight: 700;
+        color: $asphalt;
+
+        &:hover {
+          cursor: pointer;
+          background-color: $darkYellow;
+        }
+        &:disabled {
+          cursor: not-allowed;
+          background-color: $silver;
+        }
+      }
+    }
+  }
+}

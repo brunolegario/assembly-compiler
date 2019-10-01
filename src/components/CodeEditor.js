@@ -1,4 +1,8 @@
-import React from 'react';
+import React, { Fragment } from 'react';
+
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+
+import './CodeEditor.scss';
 
 
 
@@ -8,7 +12,29 @@ export default class CodeEditor extends React.Component {
         super(props);
 
         this.state = {
+            showMenu: false,
+            value: '.data\n.enddata\n\n.code\n.endcode'
+        }
 
+        this.showMenu = this.showMenu.bind(this);
+        this.closeMenu = this.closeMenu.bind(this);
+    }
+
+
+
+    showMenu = (event) => {
+        event.preventDefault();
+
+        this.setState({ showMenu: true }, () => {
+            document.addEventListener('click', this.closeMenu);
+        });
+    }
+
+    closeMenu = (event) => {
+        if (!this.button.contains(event.target)) {
+            this.setState({ showMenu: false }, () => {
+                document.removeEventListener('click', this.closeMenu);
+            })
         }
     }
 
@@ -16,9 +42,40 @@ export default class CodeEditor extends React.Component {
 
     render() {
         return (
-            <div>
-                <textarea></textarea>
-            </div>
+            <section className='code container'>
+                <label className='label'>EDITOR</label>
+                <div className='content'>
+                    <div style={{ position: 'relative' }}>
+                        <button
+                            className='toggle flex row'
+                            style={{ justifyContent: 'space-between' }}
+                            ref={(ref) => this.button = ref}
+                            onClick={ this.showMenu }>
+                            Selecione
+                            <FontAwesomeIcon
+                                icon='angle-down'
+                                color='#101010' />
+                        </button>
+                        { this.state.showMenu ? (
+                            <ul className='dropdown'>
+                                <li className='item'>Retângulo - Contorno</li>
+                                <li className='item'>Retângulo - Cores aleatórias</li>
+                            </ul>
+                        ) : (
+                            null
+                        )}
+                    </div>
+
+                    <div className='input-container'>
+                        <textarea
+                            autoCorrect={'false'}
+                            className='input'
+                            value={this.props.content}
+                            onChange={e => this.props.onChangedContent(e.target.value)}>
+                        </textarea>
+                    </div>
+                </div>
+            </section>
         );
     }
 }

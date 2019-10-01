@@ -1,8 +1,13 @@
 {
-  "name": "assembly",
+  "name": "assembly-compiler",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "^1.2.25",
+    "@fortawesome/free-regular-svg-icons": "^5.11.2",
+    "@fortawesome/free-solid-svg-icons": "^5.11.2",
+    "@fortawesome/react-fontawesome": "^0.1.5",
+    "lodash": "^4.17.15",
     "node-sass": "^4.12.0",
     "react": "^16.9.0",
     "react-dom": "^16.9.0",
@@ -29,5 +34,17 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  }
+  },
+  "description": "This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/brunoyo/assembly-compiler.git"
+  },
+  "author": "brunolegario",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/brunoyo/assembly-compiler/issues"
+  },
+  "homepage": "https://github.com/brunoyo/assembly-compiler#readme"
 }
