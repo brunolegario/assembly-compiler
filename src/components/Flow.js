@@ -44,13 +44,13 @@ export default class Flow extends React.Component {
                     <button
                         className='button yellow'
                         disabled={ pc === '' ? true : false }
-                        onClick={() => this.props.onAdvanceProgram(false)}>
+                        onClick={() => this.props.onAdvanceProgramStep()}>
                         + 1
                     </button>
                     <button
                         className='button yellow'
                         disabled={ pc === '' ? true : false }
-                        onClick={() => this.props.onAdvanceProgram(true)}>
+                        onClick={() => this.props.onAdvanceProgramAll()}>
                         + ALL
                     </button>
                 </div>

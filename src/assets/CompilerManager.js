@@ -141,11 +141,11 @@ export default class CompilerManager {
                                 val = cleanLine[1 + offset];
                             }
                             else if (cleanLine[1 + offset].match(/[A-z]/g)) {
-                                console.log(cleanLine[1 + offset]);
-                                if (this.labels[cleanLine[1 + offset]] !== undefined) {
-                                    val = cleanLine[1 + offset];
-                                } else if (this.variables[cleanLine[1 + offset]] !== undefined) {
+                                //console.log(cleanLine[1 + offset]);
+                                if (this.variables[cleanLine[1 + offset]] !== undefined) {
                                     val = this.variables[cleanLine[1 + offset]].position;
+                                } else if (cleanLine[1 + offset].match(/[A-z]/g) && !cleanLine[1 + offset].startsWith('#') && !cleanLine[1 + offset].endsWith(':')) {
+                                    val = cleanLine[1 + offset];
                                 } else {
                                     throw "UNRECOGNIZABLE LABEL";
                                 }
@@ -182,7 +182,15 @@ export default class CompilerManager {
             }
         }
 
+        for (let j = 0; j < this.memory.length; j++) {
+            if (this.memory[j] && typeof this.memory[1] !== 'number' &&
+                typeof this.memory[j].value !== 'number' && this.memory[j].value.match(/[A-z]/g) &&
+                !this.memory[j].value.startsWith('/') && !this.memory[j].value.endsWith('/')) {
 
+                this.memory[j].value = this.labels[this.memory[j].value];
+            }
+        }
+        //console.log(this.memory);
 
         return {
             variables: this.variables,

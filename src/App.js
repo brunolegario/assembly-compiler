@@ -9,33 +9,56 @@ import './css/app.scss';
 
 let INITIAL_STRING =
 `.data
-RESULT: DB #30, #0
-VEZES: DB #31, #3
+ZERO: DB #144, #0
+COLOR: DB #145, #255
+WIDTH: DB #146, #20
+HEIGHT: DB #147, #10
+Y: DB #148, #0
+X: DB #149, #0
 .enddata
 
 .code
-INICIO: LD VEZES
-JZ FIM
-SUB #1
-ST VEZES
-LD RESULT
-ADD #2
-ST RESULT
-JMP INICIO
-FIM: HALT
+START: LD Y
+SUB HEIGHT
+JZ END
+DRAW: LD X
+LD2 Y
+POS
+LD ZERO
+LD2 ZERO
+LD3 COLOR
+PXL
+LD X
+SUB WIDTH
+JZ NLINE
+LD X
+ADD #1
+ST X
+JMP DRAW
+NLINE: LD ZERO
+ST X
+LD Y
+ADD #1
+ST Y
+JMP START
+END: HALT
 .endcode`;
 
 // `.data
-// INICIO: DB #127, #999
-// FINAL: DB #128, #100
+// RESULT: DB #30, #0
+// VEZES: DB #31, #3
 // .enddata
 
 // .code
-// START: LD INICIO
-// LD #444
-// ST 127
-// ST FINAL
-// HALT
+// INICIO: LD VEZES
+// JZ FIM
+// SUB #1
+// ST VEZES
+// LD RESULT
+// ADD #2
+// ST RESULT
+// JMP INICIO
+// FIM: HALT
 // .endcode`;
 
 

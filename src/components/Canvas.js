@@ -19,7 +19,7 @@ export default class Canvas extends React.Component {
         return (
             <section className='canvas container'>
                 <label className='label'>CANVAS</label>
-                <div className='content'>oi</div>
+                <canvas className='canvas'></canvas>
             </section>
         );
     }
