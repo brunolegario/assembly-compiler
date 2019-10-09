@@ -2,6 +2,8 @@ import React, { Fragment } from 'react';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
+
+
 import './CodeEditor.scss';
 
 
@@ -58,8 +60,9 @@ export default class CodeEditor extends React.Component {
                         </button>
                         { this.state.showMenu ? (
                             <ul className='dropdown'>
-                                <li className='item'>Retângulo - Contorno</li>
-                                <li className='item'>Retângulo - Cores aleatórias</li>
+                                <li onClick={() => this.props.onChangeCode(1)} className='item'>Filled Blue Rectangle</li>
+                                <li onClick={() => this.props.onChangeCode(2)} className='item'>Green Rectangle Stroke</li>
+                                <li onClick={() => this.props.onChangeCode(3)} className='item'>Random Colored Rectangle</li>
                             </ul>
                         ) : (
                             null

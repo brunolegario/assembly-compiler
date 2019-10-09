@@ -142,12 +142,34 @@ export default class CompilerManager {
                             }
                             else if (cleanLine[1 + offset].match(/[A-z]/g)) {
                                 //console.log(cleanLine[1 + offset]);
-                                if (this.variables[cleanLine[1 + offset]] !== undefined) {
-                                    val = this.variables[cleanLine[1 + offset]].position;
-                                } else if (cleanLine[1 + offset].match(/[A-z]/g) && !cleanLine[1 + offset].startsWith('#') && !cleanLine[1 + offset].endsWith(':')) {
-                                    val = cleanLine[1 + offset];
-                                } else {
-                                    throw "UNRECOGNIZABLE LABEL";
+                                if (cleanLine[1 + offset].endsWith(',i')) {
+                                    let cleanName = cleanLine[1 + offset].slice(0, cleanLine[1 + offset].length - 2);
+                                    let tempVariable = this.variables[cleanName];
+
+                                    if (tempVariable !== undefined) {
+                                        if (this.memory[tempVariable.position] !== undefined) {
+                                            val = this.memory[tempVariable.position].value;
+                                        } else {
+                                            throw "POINTER REFERENCES AN EMPTY VALUE";
+                                        }
+                                    } else if (!cleanName.startsWith('#')) {
+                                        if (this.memory[cleanName] !== undefined) {
+                                            val = this.memory[cleanName].value;
+                                        } else {
+                                            throw "POINTER REFERENCES AN EMPTY VALUE";
+                                        }
+                                    } else {
+                                        throw "UNRECOGNIZABLE LABEL";
+                                    }
+                                }
+                                else {
+                                    if (this.variables[cleanLine[1 + offset]] !== undefined) {
+                                        val = this.variables[cleanLine[1 + offset]].position;
+                                    } else if (cleanLine[1 + offset].match(/[A-z]/g) && !cleanLine[1 + offset].startsWith('#') && !cleanLine[1 + offset].endsWith(':')) {
+                                        val = cleanLine[1 + offset];
+                                    } else {
+                                        throw "UNRECOGNIZABLE LABEL";
+                                    }
                                 }
                             }
                             else if (cleanLine[1 + offset].match(/^\d+$/)){

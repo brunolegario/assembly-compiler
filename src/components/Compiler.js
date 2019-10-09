@@ -17,6 +17,11 @@ export default class Compiler extends React.Component {
         super(props);
 
         this.state = {
+            loading: false,
+
+            width: 100,
+            height: 100,
+
             variables: [],
             memory: Array.from({ length: 256 }).map((u, i) => i),
 
@@ -36,22 +41,11 @@ export default class Compiler extends React.Component {
                 n: '',
                 p: ''
             },
-
-            canvas: [],
         }
 
         this.compiler = new CompilerManager();
 
         this.canvas = React.createRef();
-    }
-
-    componentDidMount() {
-        let context = this.canvas.current;
-
-        this.setState({
-            canvas: Array.from({ length: context.width * context.height * 4 }).map((u, i) => 0),
-        }, () => console.log(this.state.canvas));
-        //console.log(context);
     }
 
 
@@ -71,12 +65,18 @@ export default class Compiler extends React.Component {
     }
 
     handleStart = () => {
+        let context = this.canvas.current.getContext('2d');
+        context.clearRect(0, 0, this.state.width, this.state.height);
+
         this.handleUpdateControl('pc', 0);
     }
 
     handleReset = async () => {
         try {
             await this.compiler.handleReset();
+
+            let context = this.canvas.current.getContext('2d');
+            context.clearRect(0, 0, this.state.width, this.state.height);
 
             this.setState({
                 variables: [],
@@ -112,7 +112,7 @@ export default class Compiler extends React.Component {
         this.setState({ control: control });
     }
 
-    handleAdvanceProgramStep = (callback = null) => {
+    handleAdvanceProgramStep = async (callback = null) => {
         //console.log(isAll);
 
         let control = _.cloneDeep(this.state.control);
@@ -196,13 +196,16 @@ export default class Compiler extends React.Component {
         else if (currentMemory >= 106 && currentMemory <= 110) {
             // Clean the value
             nextElement = memory[control.pc + 1].value;
-            if (typeof nextElement === 'string' && nextElement.startsWith('#') && currentMemory !== 108) {
-                nextElement = nextElement.slice(1, nextElement.length);
-            } else if (memory[nextElement].value.startsWith('#')) {
-                nextElement = memory[nextElement].value.slice(1, memory[nextElement].value.length);
-            } else {
-                nextElement = memory[nextElement].value;
+            if (currentMemory !== 108) {
+                if (typeof nextElement === 'string' && nextElement.startsWith('#')) {
+                    nextElement = nextElement.slice(1, nextElement.length);
+                } else if (memory[nextElement].value.startsWith('#')) {
+                    nextElement = memory[nextElement].value.slice(1, memory[nextElement].value.length);
+                } else {
+                    nextElement = memory[nextElement].value;
+                }
             }
+
 
             // Update values
             switch (currentMemory) {
@@ -213,7 +216,9 @@ export default class Compiler extends React.Component {
                     control.ac = parseInt(control.ac) + parseInt(nextElement);
                     break;
                 case 108 :
-                    memory[nextElement] = Math.random() * (control.ac2 - control.ac1) + control.ac1
+                    let rand = Math.random() * (parseInt(control.ac2) - parseInt(control.ac)) + parseInt(control.ac);
+
+                    memory[nextElement].value = '#' + parseInt(rand);
                     break;
                 case 109 :
                     control.ac = Math.cos(nextElement / 180 * Math.PI) * control.ac2;
@@ -299,34 +304,33 @@ export default class Compiler extends React.Component {
             let canvas = this.canvas.current;
             let context = canvas.getContext('2d');
 
-            // let imageData = context.getImageData(0, 0, canvas.width, canvas.height);
-            // console.log('IMAGEDATA: ', imageData.data);
-            // console.log('CONTROL Y: ', control.y);
-            // console.log('CONTROL X: ', control.x);
-            // console.log('INDEX: ', (control.y * canvas.width + control.x) * 4);
-
-            //console.log(imageData);
             context.beginPath();
             context.fillStyle = `rgba(${control.ac},${control.ac2}, ${control.ac3}, 255)`;
             context.fillRect(control.x, control.y, 1, 1);
-            // imageData.data[(control.y * canvas.width + control.x) * 4] = control.ac;
-            // imageData.data[(control.y * canvas.width + control.x) * 4 + 1] = control.ac2;
-            // imageData.data[(control.y * canvas.width + control.x) * 4 + 2] = control.ac3;
-            // imageData.data[(control.y * canvas.width + control.x) * 4 + 3] = 255;
 
-            // // console.log(this.refs.canvas.getContext('2d'));
-            // context.putImageData(imageData, control.x, control.y);
             control.pc += 1;
         }
 
 
-        this.setState({
+        await this.setState({
             memory: memory,
             control: control
-        });
+        }, () => console.log('STEP FINISHED'));
     }
 
     handleAdvanceProgramAll = () => {
+        let that = this;
+
+        async function loop() {
+            while(that.state.control.pc !== '' && that.state.memory[that.state.control.pc] !== undefined) {
+                await that.handleAdvanceProgramStep();
+            }
+        }
+
+        this.setState({ loading: true }, async () => {
+            console.log(this.state.loading);
+            loop().then(() => this.setState({ loading: false }, () => console.log(this.state.loading)));
+        });
 
     }
 
@@ -359,14 +363,96 @@ export default class Compiler extends React.Component {
                             onAdvanceProgramAll={this.handleAdvanceProgramAll}
                         />
                     </div>
-                    <div className='canvas container' style={{ width: '70%' }}>
+                    <div className='canvas container' style={{ width: '55%' }}>
                         <label className='label'>CANVAS</label>
                         <canvas
-                            width={20} height={10}
+                            width={this.state.width} height={this.state.height}
                             ref={this.canvas}
                             className='canvas' />
                     </div>
+                    <div className='subtitles container' style={{ width: '15%', height: '100%' }}>
+                        <label className='label'>LEGENDA</label>
+                        <div className='content'>
+                            <p>
+                                <span className='operation'>999</span> - INSTRUÇÃO
+                            </p>
+                            <p>
+                                <span className='value'>999</span> - VALOR
+                            </p>
+                            <hr />
+                            <p>
+                                <span className='operation'>100</span> - Load
+                            </p>
+                            <p>
+                                <span className='operation'>101</span> - Load 2
+                            </p>
+                            <p>
+                                <span className='operation'>102</span> - Load 3
+                            </p>
+                            <p>
+                                <span className='operation'>103</span> - Set
+                            </p>
+                            <p>
+                                <span className='operation'>104</span> - Set 2
+                            </p>
+                            <p>
+                                <span className='operation'>105</span> - Set 3
+                            </p>
+                            <p>
+                                <span className='operation'>106</span> - Subtraction
+                            </p>
+                            <p>
+                                <span className='operation'>107</span> - Addition
+                            </p>
+                            <p>
+                                <span className='operation'>108</span> - Random
+                            </p>
+                            <p>
+                                <span className='operation'>109</span> - Cosine
+                            </p>
+                            <p>
+                                <span className='operation'>110</span> - Sine
+                            </p>
+                            <p>
+                                <span className='operation'>111</span> - Jump
+                            </p>
+                            <p>
+                                <span className='operation'>112</span> - Jump if positive
+                            </p>
+                            <p>
+                                <span className='operation'>113</span> - Jump if negative
+                            </p>
+                            <p>
+                                <span className='operation'>114</span> - Jump if zero
+                            </p>
+                            <p>
+                                <span className='operation'>115</span> - Jump if non-zero
+                            </p>
+                            <p>
+                                <span className='operation'>116</span> - Halt
+                            </p>
+                            <p>
+                                <span className='operation'>117</span> - Print
+                            </p>
+                            <p>
+                                <span className='operation'>118</span> - Input
+                            </p>
+                            <p>
+                                <span className='operation'>119</span> - Position
+                            </p>
+                            <p>
+                                <span className='operation'>120</span> - Pixel
+                            </p>
+                            <p>
+                                <span className='operation'>121</span> - Clear
+                            </p>
+                        </div>
+                    </div>
                 </div>
+
+                { this.state.loading ? (
+                    <div className='loading-box' />
+                ) : null}
             </Fragment>
         );
     }

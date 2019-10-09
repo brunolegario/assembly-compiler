@@ -34,7 +34,7 @@ export default class Memory extends React.Component {
             if (typeof this.props.content[i] === 'object' &&
                 'value' in this.props.content[i]) {
 
-                rendered.push(this.renderCell(this.props.content[i].value, i));
+                rendered.push(this.renderCell(this.props.content[i], i));
 
             } else {
                 rendered.push(this.renderCell('•••', i));
@@ -55,8 +55,10 @@ export default class Memory extends React.Component {
         }
 
         return (
-            <div key={i} className={`cell filled ${i === this.props.control.pc ? 'current' : null}`}>
-                { item }
+            <div
+                key={i}
+                className={`cell filled ${i === this.props.control.pc ? 'current' : null} ${ item.command === 'OPERATION' ? 'operation' : null}`}>
+                { item.value }
                 <span className='index'>{ i }</span>
             </div>
         );
